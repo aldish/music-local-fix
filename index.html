@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MusicMotions</title>
+
+  <!-- face-api.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+  <!-- Script utama kamu -->
+    <script src="daftar_lagu.js"></script>
+    <script defer src="script.js"></script>
+
+  <!-- Favicon -->
+    <link rel="icon" href="assets/favicon.png" type="image/png">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      background: url('assets/blur-background.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .logo {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      max-width: 180px;
+    }
+    .video-box {
+      width: 320px;
+      height: 240px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      margin: auto;
+      background-color: #f0f0f0;
+    }
+    .detect-btn {
+      background-color: transparent;
+      border: none;
+      width: 64px;
+      height: 64px;
+      margin: 1.5rem auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .detect-btn img {
+      width: 64px;
+      height: 64px;
+    }
+    .status-box {
+      background-color: white;
+      border-radius: 12px;
+      padding: 12px 20px;
+      margin: 1.5rem auto 0;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .status-box img {
+      height: 32px;
+      margin-right: 10px;
+    }
+    .song-card {
+      background: white;
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin: 10px auto;
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .song-thumb {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      margin-right: 16px;
+      object-fit: cover;
+    }
+    .song-info {
+      flex-grow: 1;
+      text-align: left;
+    }
+    .song-info small {
+      color: #666;
+    }
+    .play-btn {
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    max-width: 120px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container text-center">
+    <img src="assets/logo-musicmotions.png" alt="Music Motions Logo" class="logo">
+      <div class="video-box position-relative">
+      <video id="video" width="100%" height="100%" autoplay muted></video>
+      <canvas id="canvas" width="320" height="240" style="display:none; position:absolute; top:0; left:0; z-index:1;"></canvas>
+<div id="countdown" style="
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 72px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+  display: none;
+  z-index: 10;
+">3</div>
+
+  </div>
+<div class="d-flex justify-content-center gap-4 mt-4">
+  <!-- Tombol Deteksi -->
+  <div class="bg-white rounded-circle shadow" 
+       style="width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
+    <img src="assets/tombol-deteksi.png" 
+         alt="Deteksi" 
+         style="width: 64px; height: 64px; cursor: pointer;" 
+         onclick="detect()">
+  </div>
+  <canvas id="snapshot" width="320" height="240" style="display:none;"></canvas>
+  <div class="d-flex justify-content-center mt-1">
+<div class="bg-white rounded-circle shadow" 
+       style="width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
+    <img src="assets/tombol-reset.png" 
+         alt="Reset Kamera" 
+         style="width: 64px; height: 64px; cursor: pointer;" 
+         onclick="resetVideo()">
+  </div>
+</div>
+</div>
+</div>
+</div>
+    <div class="d-flex justify-content-center mt-3">
+  <div id="status" class="status-box">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Bot">
+    <span>Ekspresi Terdeteksi: <strong><span id="emotion-text">-</span></strong></span>
+  </div>
+</div>
+<div id="feedback-section" class="mt-3" style="display: none;">
+  <div class="bg-white p-3 rounded shadow text-center" style="max-width: 300px; margin: auto;">
+    <p>Apakah ekspresi sudah sesuai?</p>
+    <button class="btn btn-success me-2" onclick="submitFeedback('Ya')">Ya</button>
+    <button class="btn btn-danger" onclick="submitFeedback('Tidak')">Tidak</button>
+  </div>
+</div>
+    <div id="playlist" class="mt-4"></div>
+  </div>
+
+  <!-- Bootstrap Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

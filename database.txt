@@ -1,0 +1,25 @@
+CREATE DATABASE IF NOT EXISTS `music-emotion`;
+
+USE `music-emotion`;
+
+CREATE TABLE logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expression VARCHAR(255),
+  latency FLOAT,
+  song1 VARCHAR(255),
+  song2 VARCHAR(255),
+  song3 VARCHAR(255),
+  song4 VARCHAR(255),
+  song5 VARCHAR(255)
+);
+
+
+
+
+CREATE TABLE user_feedback (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+  feedback ENUM('Ya', 'Tidak') NOT NULL,
+  average_accuracy FLOAT
+);
