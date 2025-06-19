@@ -16,9 +16,11 @@ $song2 = $_POST['song2'] ?? '';
 $song3 = $_POST['song3'] ?? '';
 $song4 = $_POST['song4'] ?? '';
 $song5 = $_POST['song5'] ?? '';
+$song6 = $_POST['song6'] ?? '';
 
-$stmt = $conn->prepare("INSERT INTO logs (expression, latency_ms, song_1, song_2, song_3, song_4, song_5) VALUES (?, ?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("sdsssss", $expression, $latency, $song1, $song2, $song3, $song4, $song5);
+$stmt = $conn->prepare("INSERT INTO logs (expression, latency_ms, song1, song2, song3, song4, song5, song6) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sdssssss", $expression, $latency, $song1, $song2, $song3, $song4, $song5, $song6);
+
 
 if ($stmt->execute()) {
   echo "✅ Log berhasil disimpan.";

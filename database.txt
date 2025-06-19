@@ -11,7 +11,8 @@ CREATE TABLE logs (
   song2 VARCHAR(255),
   song3 VARCHAR(255),
   song4 VARCHAR(255),
-  song5 VARCHAR(255)
+  song5 VARCHAR(255),
+  song6 VARCHAR(255)
 );
 
 

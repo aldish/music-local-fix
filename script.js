@@ -9,6 +9,8 @@ function getThumbnailFileName(title) {
   }  
 
 async function start() {
+  document.getElementById('btn-reset-wrapper').style.display = 'none';
+  document.getElementById('coba-lagi').style.display = 'none';
   try {
     await faceapi.nets.tinyFaceDetector.loadFromUri('models');
     await faceapi.nets.faceExpressionNet.loadFromUri('models');
@@ -99,14 +101,13 @@ async function processDetection() {
     return;
   }
 
-  const randomSongs = songList.sort(() => 0.5 - Math.random()).slice(0, 5);
-  const [song1, song2, song3, song4, song5] = randomSongs;
+  const randomSongs = songList.sort(() => 0.5 - Math.random()).slice(0, 6);
+  const [song1, song2, song3, song4, song5, song6] = randomSongs;
 
   playlistDiv.innerHTML = randomSongs.map((song) => {
     const thumbnail = getThumbnailFileName(song.title);
     return `
       <div class="song-card">
-        <img src="${thumbnail}" alt="Thumbnail" class="song-thumb">
         <div class="song-info">
           <strong>${song.artist}</strong><br>
           <small>${song.title}</small><br>
@@ -119,7 +120,7 @@ async function processDetection() {
     `;
   }).join('');
 
-  document.getElementById('feedback-section').style.display = 'block';
+  // document.getElementById('feedback-section').style.display = 'block';
 
   // Menghentikan penghitung waktu dan menampilkan hasilnya ke konsol
   console.timeEnd('prosesLoop');
@@ -134,11 +135,16 @@ async function processDetection() {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     // Kirim 'duration' yang sudah dihitung
-    body: `expression=${encodeURIComponent(emotion)}&latency=${encodeURIComponent(duration)}&song1=${encodeURIComponent(song1?.title || '')}&song2=${encodeURIComponent(song2?.title || '')}&song3=${encodeURIComponent(song3?.title || '')}&song4=${encodeURIComponent(song4?.title || '')}&song5=${encodeURIComponent(song5?.title || '')}`
+    body: `expression=${encodeURIComponent(emotion)}&latency=${encodeURIComponent(duration)}&song1=${encodeURIComponent(song1?.title || '')}&song2=${encodeURIComponent(song2?.title || '')}&song3=${encodeURIComponent(song3?.title || '')}&song4=${encodeURIComponent(song4?.title || '')}&song5=${encodeURIComponent(song5?.title || '')}&song6=${encodeURIComponent(song6?.title || '')}`
   })
   .then(res => res.text())
   .then(data => console.log(data))
   .catch(err => console.error("Gagal menyimpan log:", err));
+
+  document.getElementById('tekan-disini').style.display = 'none';
+  document.getElementById('coba-lagi').style.display = 'block';
+  document.getElementById('btn-detect-wrapper').style.display = 'none';
+  document.getElementById('btn-reset-wrapper').style.display = 'flex';
 }
 
 function submitFeedback(feedback) {
@@ -177,6 +183,12 @@ function resetVideo() {
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Bot">
     <span>Ekspresi Terdeteksi: <strong><span id="emotion-text">-</span></strong></span>
   `;
+
+  document.getElementById('btn-reset-wrapper').style.display = 'none';
+  document.getElementById('btn-detect-wrapper').style.display = 'flex';
+  document.getElementById('coba-lagi').style.display = 'None';
+  document.getElementById('tekan-disini').style.display = 'block';
+
 }
 
 start();
